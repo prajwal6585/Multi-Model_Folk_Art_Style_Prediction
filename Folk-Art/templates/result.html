@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            position: relative;
+            margin-top: 40px;
+        }
+
+        h1::after {
+            content: '';
+            width: 100px;
+            height: 4px;
+            background-color: #3498db;
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            color: burlywood;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 22%;
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            color: #f39c12;
+        }
+
+        .model-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .prediction {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .confidence {
+            font-size: 1rem;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .confidence-bar {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 10px;
+            margin-bottom: 15px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        .confidence-fill.high {
+            background-color: #28a745;
+        }
+
+        .confidence-fill.medium {
+            background-color: #f39c12;
+        }
+
+        .confidence-fill.low {
+            background-color: #e74c3c;
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 22%;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .download-icon {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 1rem;
+            color: #3498db;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .download-icon:hover {
+            color: #f39c12;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 30px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card, .chart-container {
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+
+        nav {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 10px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            position: relative;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 100%;
+            height: 2px;
+            background: #28a745;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        nav ul li a:hover::after {
+            transform: scaleX(1);
+        }
+        h2
+        {
+            padding-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <h1>Prediction Results</h1>
+
+    <img src="{{ image_url }}" alt="Uploaded Image">
+
+    <div class="container">
+        {% for model, result in results.items() %}
+        <div class="card">
+            <div class="model-name">{{ model }}</div>
+            <div class="prediction">{{ result.label }}</div>
+            <div class="confidence">Confidence: {{ result.confidence }}%</div>
+            <div class="confidence-bar">
+                <div class="confidence-fill 
+                    {% if result.confidence > 75 %} high
+                    {% elif result.confidence > 40 %} medium
+                    {% else %} low
+                    {% endif %}"
+                    style="width: {{ result.confidence }}%;"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <h2>Final Prediction</h2>
+    <div class="card">
+        <div class="model-name">Final Prediction</div>
+        <div class="prediction">{{ final_label }}</div>
+        <div class="confidence">Confidence: {{ final_confidence }}%</div>
+    </div>
+
+    <hr>
+
+    <h2>Accuracy Comparison Graph</h2>
+    <div class="chart-container">
+        <img src="data:image/png;base64,{{ accuracy_chart }}" alt="Accuracy Comparison Chart" />
+        <a class="download-icon" href="data:image/png;base64,{{ accuracy_chart }}" download="accuracy_chart.png">
+            <i class="fas fa-download"></i>
+        </a>
+    </div>
+
+    <hr>
+
+    <h2>Individual Model Accuracy Graphs</h2>
+    <div class="container">
+        {% for model, chart in individual_charts.items() %}
+        <div class="chart-container">
+            <h3>{{ model }}</h3>
+            <img src="data:image/png;base64,{{ chart }}" alt="{{ model }} Accuracy Chart" />
+            <a class="download-icon" href="data:image/png;base64,{{ chart }}" download="{{ model }}_accuracy_chart.png">
+                <i class="fas fa-download"></i>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <h2>Confusion Matrix</h2>
+    <div class="chart-container">
+        <img src="data:image/png;base64,{{ cm_image }}" alt="Confusion Matrix" />
+        <a class="download-icon" href="data:image/png;base64,{{ cm_image }}" download="confusion_matrix.png">
+            <i class="fas fa-download"></i>
+        </a>
+    </div>
+
+    <!-- <button onclick="window.location.href='E:/flask_cnn_app/templates/index.html'"><i class="fas fa-arrow-left"></i> Try Another Image</button> -->
+
+</body>
+</html>
